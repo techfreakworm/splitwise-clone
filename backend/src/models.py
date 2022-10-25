@@ -79,6 +79,9 @@ class Expense(Base):
     group_id = Column(Integer, ForeignKey("group.id"), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now())
+    # expense_splits = relationship("ExpenseSplit", back_populates="expense")
+    # children = relationship("ExpenseSplit", back_populates="parent")
+    children = relationship("ExpenseSplit", backref="parent")
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -98,6 +101,8 @@ class ExpenseSplit(Base):
     payer_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now())
+    # expense = relationship("Expense", back_populates="expense_splits")
+    # parent = relationship("Expense", back_populates="children")
 
     def __repr__(self):
         return f"<Payer {self.payer_id}, Payee {self.payee_id}, Pending amount {self.pending_amount}>"

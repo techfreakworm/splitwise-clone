@@ -58,6 +58,16 @@ def create_user():
         sess.commit()
     return 'Created', 201
 
+@app.route('/user', methods=['GET'])
+def get_users():
+    df = pd.read_sql(sess.query(m.User).statement, sess.bind)
+    return jsonify(df.to_dict(orient='records')), 200
+
+
+@app.route('/group', methods=['GET'])
+def get_groups():
+    df = pd.read_sql(sess.query(m.Group).statement, sess.bind)
+    return jsonify(df.to_dict(orient='records')), 200
 
 @app.route('/group', methods=['POST'])
 def create_group():
@@ -80,6 +90,10 @@ def create_group():
 
     return 'Created', 201
 
+@app.route('/expense', methods=['GET'])
+def get_expenses():
+    df = pd.read_sql(sess.query(m.Expense,m.ExpenseSplit).outerjoin(m.ExpenseSplit).statement, sess.bind)
+    return jsonify(df.to_dict(orient='records')), 200
 
 @app.route('/expense', methods=['POST'])
 def create_expense():
@@ -151,7 +165,7 @@ def update_expense():
     #     rows.append(dict(row))
     # filter all rows with settler and settle
 
-    df = pd.read_sql(expense_splits.statement, expense_splits.session.bind)
+    df = pd.read_sql(expense_splits.statement, sess.bind)
     # df.to_csv('notebooks/test.csv',index=False)
 
     # SUM of shares of non-negative pendings
